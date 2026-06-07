@@ -26,3 +26,9 @@ Thumbs.db
 *.gpkg
 *.sqlite
 *.mdb
+
+# Raw spasial GISTARU (1.2GB) — web/data/ sudah cukup
+shared/data/spasial/
+
+# Screenshot build
+docs/screenshot-*.png
