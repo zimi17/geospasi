@@ -1,4 +1,4 @@
-# Kontribusi ke GeoSERANG
+# Kontribusi ke SPASI
 
 Terima kasih tertarik berkontribusi! Berikut panduan singkat untuk memulai.
 

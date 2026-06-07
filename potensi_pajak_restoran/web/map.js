@@ -1,4 +1,4 @@
-/* GeoSERANG — map.js */
+/* SPASI — map.js */
 
 const map = L.map("map").setView([-6.08, 105.93], 14);
 

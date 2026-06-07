@@ -1,4 +1,4 @@
--- RLS Policies untuk GeoSERANG
+-- RLS Policies untuk SPASI
 -- Jalankan di Supabase SQL Editor setelah enable RLS di tabel
 
 -- 1. Tabel restoran_lapangan

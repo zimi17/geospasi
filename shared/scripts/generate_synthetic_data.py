@@ -1,7 +1,7 @@
 """
 generate_synthetic_data.py
 
-Menghasilkan data sintetis untuk development & demo GeoSERANG.
+Menghasilkan data sintetis untuk development & demo SPASI.
 Data dummy ini memiliki struktur yang sama persis dengan data asli
 sehingga ETL, QGIS model, dan frontend bisa diuji tanpa akses data Pemkab.
 

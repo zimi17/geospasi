@@ -1,4 +1,4 @@
-# GeoSERANG
+# SPASI — Sistem Pemetaan Analisis Spasial Informasi
 
 **Sistem Informasi Geografis Analisis Fiskal-Ekonomi Kabupaten Serang**
 
@@ -39,7 +39,7 @@ Membangun layer analisis fiskal-ekonomi di atas infrastruktur SDI (Sistem Data I
 ### Struktur Lengkap
 
 ```
-geoserang/
+spasi/
 ├── potensi_pajak_restoran/        # Modul pilot: pajak restoran Anyar
 │   ├── data/                      # CSV & GeoJSON sampel (<500 KB)
 │   ├── etl/                       # Script ETL Python
@@ -74,8 +74,8 @@ geoserang/
 ### 1. Clone Repo
 
 ```bash
-git clone https://github.com/<username>/geoserang.git
-cd geoserang
+git clone https://github.com/spasi-id/spasi.git
+cd spasi
 ```
 
 ### 2. Buat Virtual Environment
