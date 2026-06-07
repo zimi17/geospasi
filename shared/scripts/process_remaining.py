@@ -1,58 +1,97 @@
-"""Process remaining GeoJSON files for web data."""
+from __future__ import annotations
+
 import json
-from pathlib import Path
+import os
+from typing import Any
 
-SRC = Path("shared/data/spasial")
-DST = Path("web/data")
-DST.mkdir(parents=True, exist_ok=True)
+HERE = os.path.dirname(os.path.abspath(__file__))
+RAW_DIR = os.path.abspath(os.path.join(HERE, "..", "data", "spasial"))
+OUT_DIR = os.path.abspath(os.path.join(HERE, "..", "..", "web", "data"))
 
-# Max size to process (50MB)
-MAX_BYTES = 50_000_000
+COORD_DECIMALS = 5
+MAX_SIZE_MB = 50
 
-processed = 0
-skipped_big = 0
 
-for f in sorted(SRC.glob("*.geojson")):
-    dst = DST / f.name
+def process_file(fname: str) -> None:
+    src = os.path.join(RAW_DIR, fname)
+    size_mb = os.path.getsize(src) >> 20
+    layer_name = fname.replace(".geojson", "")
+    out = os.path.join(OUT_DIR, fname)
 
-    if dst.exists() and dst.stat().st_size > 1000:
-        continue
+    print(f"[PROCESS] {fname} ({size_mb}MB)...", end=" ", flush=True)
+    with open(src) as f:
+        data = json.load(f)
 
-    size = f.stat().st_size
-    if size > MAX_BYTES:
-        print(f"  SKIP (besar): {f.stem} ({size//1024//1024}MB)")
-        skipped_big += 1
-        continue
+    simplified = _simplify_one(data, layer_name)
+    with open(out, "w") as f:
+        json.dump(simplified, f)
 
-    print(f"  PROSES: {f.stem} ({size//1024}KB)...", end=" ")
+    out_mb = os.path.getsize(out) >> 20
+    print(f"OK → {out_mb}MB")
 
-    try:
-        with open(f) as fh:
-            data = json.load(fh)
 
-        features = data.get("features", [])
-        for feat in features:
-            g = feat.get("geometry")
-            if g and g.get("coordinates"):
-                def rc(v, d=5):
-                    if isinstance(v, (int, float)):
-                        return round(float(v), d)
-                    if isinstance(v, list):
-                        return [rc(x, d) for x in v]
-                    return v
-                g["coordinates"] = rc(g["coordinates"])
+def _simplify_one(data: dict[str, Any], layer_name: str) -> dict[str, Any]:
+    keep_props = {
+        "Desa": ["desa", "kecamatan"],
+        "Kecamatan": ["kecamatan", "kabupaten"],
+    }
+    keep = keep_props.get(layer_name, [])
 
-            props = feat.get("properties", {})
-            feat["properties"] = dict(list(props.items())[:4])
+    for feat in data.get("features", []):
+        geom = feat.get("geometry")
+        if geom:
+            _round_coords(geom["coordinates"], geom["type"])
+        props = feat.get("properties", {})
+        feat["properties"] = {k: props.get(k) for k in keep} if keep else {}
+    return data
 
-        data["features"] = features
-        with open(dst, "w") as fh:
-            json.dump(data, fh, ensure_ascii=False)
 
-        new_size = dst.stat().st_size
-        print(f"{new_size//1024}KB ({new_size*100//size}%)")
-        processed += 1
-    except Exception as e:
-        print(f"ERROR: {e}")
+def _round_coords(coords: Any, geom_type: str) -> None:
+    if geom_type.startswith("Multi"):
+        for part in coords:
+            for ring in part:
+                for i, pt in enumerate(ring):
+                    ring[i] = [
+                        round(float(pt[0]), COORD_DECIMALS),
+                        round(float(pt[1]), COORD_DECIMALS),
+                    ]
+    else:
+        for ring in coords:
+            for i, pt in enumerate(ring):
+                ring[i] = [
+                    round(float(pt[0]), COORD_DECIMALS),
+                    round(float(pt[1]), COORD_DECIMALS),
+                ]
 
-print(f"\nDone: {processed} OK, {skipped_big} skipped (besar)")
+
+def check_remaining() -> None:
+    if not os.path.isdir(RAW_DIR):
+        print(f"ERROR: {RAW_DIR} tidak ditemukan")
+        return
+
+    remaining = sorted(
+        f
+        for f in os.listdir(RAW_DIR)
+        if f.endswith(".geojson") and not os.path.exists(os.path.join(OUT_DIR, f))
+    )
+    if not remaining:
+        print("Semua file sudah diproses.")
+        return
+
+    print(f"Sisa {len(remaining)} file belum diproses:")
+    for f in remaining:
+        src = os.path.join(RAW_DIR, f)
+        size = os.path.getsize(src) >> 20
+        status = "OK" if size <= MAX_SIZE_MB else f"> {MAX_SIZE_MB}MB (skip)"
+        print(f"  {f} ({size}MB) — {status}")
+
+    for f in remaining:
+        src = os.path.join(RAW_DIR, f)
+        if os.path.getsize(src) >> 20 <= MAX_SIZE_MB:
+            process_file(f)
+        else:
+            print(f"[SKIP] {f} — terlalu besar ({os.path.getsize(src) >> 20}MB)")
+
+
+if __name__ == "__main__":
+    check_remaining()

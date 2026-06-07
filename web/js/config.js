@@ -62,6 +62,26 @@ export const LENSA = {
       { id: 'das', file: 'data/Daerah_Aliran_Sungai.geojson', type: 'fill', paint: { 'fill-color': '#0ea5e9', 'fill-opacity': 0.3 }, popup: ['nama'] },
       { id: 'kesesuaian-permukiman', file: 'data/Kesesuaian_Lahan_Permukiman.geojson', type: 'fill', paint: { 'fill-opacity': 0.5, 'fill-color': ['match', ['get', 'tingkat'], ['Sesuai'], '#22c55e', ['Kurang Sesuai'], '#eab308', ['Tidak Sesuai'], '#dc2626', '#64748b'] }, popup: ['tingkat'] },
     ]
+  },
+  ekonomi: {
+    id: 'ekonomi',
+    label: 'Ekonomi',
+    icon: '💰',
+    color: '#0ea5e9',
+    layers: [
+      { id: 'hotel-desa', file: 'data/ekonomi.geojson', type: 'fill', paint: { 'fill-opacity': 0.6, 'fill-color': ['step', ['get', 'hotel'], '#e0f2fe', 1, '#7dd3fc', 5, '#38bdf8', 15, '#0284c7', 50, '#0c4a6e'] }, popup: ['desa','hotel','penginapan','menara'] },
+      { id: 'hotel-desa-outline', file: 'data/ekonomi.geojson', type: 'line', paint: { 'line-color': '#64748b', 'line-width': 0.5 }, popup: [] },
+    ]
+  },
+  demografi: {
+    id: 'demografi',
+    label: 'Demografi',
+    icon: '👥',
+    color: '#a855f7',
+    layers: [
+      { id: 'penduduk-kec', file: 'data/demografi.geojson', type: 'fill', paint: { 'fill-opacity': 0.6, 'fill-color': ['step', ['get', 'penduduk'], '#faf5ff', 50000, '#d8b4fe', 100000, '#a855f7', 150000, '#7c3aed', 200000, '#581c87'] }, popup: ['kecamatan','penduduk','laki','perempuan'] },
+      { id: 'penduduk-kec-outline', file: 'data/demografi.geojson', type: 'line', paint: { 'line-color': '#64748b', 'line-width': 1.5 }, popup: [] },
+    ]
   }
 };
 
@@ -92,5 +112,19 @@ export const LEGENDA = {
     { label: 'Sangat Curam', color: '#dc2626' },
     { label: 'Sawah', color: '#eab308' },
     { label: 'Hutan', color: '#15803d' },
+  ],
+  ekonomi: [
+    { label: 'Tidak ada hotel', color: '#e0f2fe' },
+    { label: '1–4 hotel', color: '#7dd3fc' },
+    { label: '5–14 hotel', color: '#38bdf8' },
+    { label: '15–49 hotel', color: '#0284c7' },
+    { label: '50+ hotel', color: '#0c4a6e' },
+  ],
+  demografi: [
+    { label: '< 50.000 jiwa', color: '#faf5ff' },
+    { label: '50–100 ribu', color: '#d8b4fe' },
+    { label: '100–150 ribu', color: '#a855f7' },
+    { label: '150–200 ribu', color: '#7c3aed' },
+    { label: '200+ ribu', color: '#581c87' },
   ],
 };

@@ -1,166 +1,95 @@
-"""
-simplify_web.py — Simplifikasi GeoJSON untuk web app
-
-- Round coordinates to 5 desimal (~1m)
-- Simplify geometry (Douglas-Peucker, tolerance 0.001° ~ 100m)
-- Drop metadata/code columns, keep only `nama` + `lensa` fields
-- Output ke web/data/
-"""
+from __future__ import annotations
 
 import json
+import os
 import sys
-from pathlib import Path
+from typing import Any
 
-SPASIAL_DIR = Path(__file__).resolve().parent.parent / "data" / "spasial"
-OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "web" / "data"
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+HERE = os.path.dirname(os.path.abspath(__file__))
+RAW_DIR = os.path.abspath(os.path.join(HERE, "..", "data", "spasial"))
+OUT_DIR = os.path.abspath(os.path.join(HERE, "..", "..", "web", "data"))
 
-KEEP_PROPS = {
-    "Batas_Kelurahan_Desa": ["nama", "kode_desa", "kecamatan", "kabupaten"],
-    "Batas_Kecamatan": ["nama", "kabupaten"],
-    "Batas_Kabupaten_Kota": ["nama"],
-    "Pola_Ruang_Kabupaten_Serang": ["nama", "fungsi", "peraturan"],
-    "Rencana_Pola_Ruang": ["nama", "jenis", "peraturan"],
-    "Kawasan_Peruntukan_Lindung": ["nama", "fungsi"],
-    "Kawasan_Peruntukan_Budi_Daya": ["nama", "fungsi"],
-    "Kawasan_Permukiman": ["nama"],
-    "Kawasan_Pertanian": ["nama"],
-    "BAHAYA BANJIR": ["tingkat", "kecamatan"],
-    "BAHAYA BANJIR BANDANG": ["tingkat", "kecamatan"],
-    "Bahaya Tanah Longsor": ["tingkat", "kecamatan"],
-    "BAHAYA GEMPA BUMI": ["tingkat"],
-    "BAHAYA CUACA EKSTRIM": ["tingkat"],
-    "BAHAYA GELOMBANG EKSTRIM DAN ABRASI": ["tingkat"],
-    "Bahaya Tsunami": ["tingkat"],
-    "Bahaya_Kebakaran_Hutan": ["tingkat", "kecamatan"],
-    "Daerah_Rawan_Bencana": ["jenis", "tingkat"],
-    "Lokasi_Banjir_2022": ["kecamatan", "desa", "korban"],
-    "Lokasi_Banjir_Longsor_2021": ["kecamatan", "desa", "korban"],
-    "Jalan_Kabupaten_Serang": ["nama", "kelas", "kondisi"],
-    "Jalan Provinsi Banten": ["nama", "kelas", "kondisi"],
-    "KONDISI_JALAN_2025": ["nama", "kondisi", "panjang"],
-    "Kewenangan_Jalan": ["nama", "kewenangan"],
-    "Rencana_Jaringan_Jalan": ["nama", "fungsi"],
-    "Rencana_Jaringan_Kereta_Api": ["nama"],
-    "JEMBATAN_PROVINSI_BANTEN_2024_UPDATE": ["nama", "kondisi", "panjang"],
-    "Garis Pantai": [],
-    "Penggunaan_Lahan": ["nama"],
-    "Kepadatan_Penduduk": ["kepadatan", "kecamatan"],
-    "Kelerengan": ["kelas", "persen"],
-    "Daerah_Aliran_Sungai": ["nama", "luas"],
-    "Geologi_2023": ["formasi", "batuan"],
-    "JENIS_TANAH": ["jenis"],
-    "Kesesuaian_Lahan_Permukiman": ["tingkat"],
-    "Rencana_Kawasan_Pariwisata": ["nama"],
-    "Rencana_Kawasan_Strategis": ["nama", "jenis"],
-    "Kawasan_Hutan_SK": ["nama", "fungsi"],
-    "Kawasan_Pencadangan_Konservasi_di_Laut": ["nama"],
-    "LP2B_KOTA_SERANG": ["luas", "status"],
-    "LSD_KAB_SERANG": ["luas", "status"],
-    "Bahaya_Kebakaran_Hutan": ["tingkat", "kecamatan"],
-    "PolaRuang_RTRW_Provinsi_Banten": ["nama", "fungsi"],
-}
-
-SIMPLIFY_TOLERANCE = {
-    "Batas_Kelurahan_Desa": 0.0005,
-    "Batas_Kecamatan": 0.0003,
-    "Batas_Kabupaten_Kota": 0.0001,
-    "Pola_Ruang_Kabupaten_Serang": 0.0005,
-    "Kawasan_Peruntukan_Lindung": 0.0003,
-    "Kawasan_Peruntukan_Budi_Daya": 0.0003,
-    "Kawasan_Pertanian": 0.0005,
-    "Kawasan_Permukiman": 0.0003,
-    "Rencana_Pola_Ruang": 0.0005,
-    "Kelerengan": 0.0003,
+COORD_DECIMALS = 5
+MAX_SIZE_MB = 50
+KEEP_PROPS: dict[str, list[str]] = {
+    "Desa": ["desa", "kecamatan", "kabupaten", "provinsi"],
+    "Kecamatan": ["kecamatan", "kabupaten"],
+    "Jalan": ["nama_jalan", "fungsi", "status"],
+    "Sungai": ["nama_sungai", "tipe"],
+    "default": [],
 }
 
 
-def round_coords(coords, decimals=5):
-    if isinstance(coords, (int, float)):
-        return round(coords, decimals)
-    if isinstance(coords, list):
-        return [round_coords(c, decimals) for c in coords]
-    return coords
+def simplify_geojson(data: dict[str, Any], layer_name: str) -> dict[str, Any]:
+    keep = KEEP_PROPS.get(layer_name, KEEP_PROPS["default"])
+    for feat in data.get("features", []):
+        geom = feat.get("geometry")
+        if geom and geom["type"] in ("Polygon", "MultiPolygon", "LineString", "MultiLineString"):
+            coords = geom["coordinates"]
+            _round_coords(coords, geom["type"])
+        elif geom and geom["type"] == "Point":
+            geom["coordinates"] = [
+                round(float(geom["coordinates"][0]), COORD_DECIMALS),
+                round(float(geom["coordinates"][1]), COORD_DECIMALS),
+            ]
 
-
-def simplify_geojson(input_path: Path, output_path: Path, keep_props: list[str], tolerance: float = 0):
-    with open(input_path) as f:
-        data = json.load(f)
-
-    if data["type"] != "FeatureCollection":
-        return False
-
-    simplified = []
-    removed = 0
-    for feat in data["features"]:
         props = feat.get("properties", {})
-
-        new_props = {}
-        for k in keep_props:
-            v = props.get(k)
-            if v is not None:
-                new_props[k] = v
-
-        if tolerance > 0:
-            geom = feat.get("geometry")
-            if geom and geom.get("type") in ("Polygon", "MultiPolygon"):
-                geom["coordinates"] = round_coords(geom["coordinates"], 5)
-                feat["geometry"] = geom
-            elif geom:
-                geom["coordinates"] = round_coords(geom["coordinates"], 5)
-                feat["geometry"] = geom
-
-        feat["properties"] = new_props
-        simplified.append(feat)
-
-    output = {"type": "FeatureCollection", "features": simplified}
-    output_path.write_text(json.dumps(output, ensure_ascii=False))
-    return True
+        if keep:
+            feat["properties"] = {k: props.get(k) for k in keep}
+        else:
+            feat["properties"] = {}
+    return data
 
 
-def main():
-    layers_ok = 0
-    layers_skip = 0
-    total_in = 0
-    total_out = 0
+def _round_coords(coords: Any, geom_type: str) -> None:
+    if geom_type.startswith("Multi"):
+        for part in coords:
+            for ring in part:
+                for i, pt in enumerate(ring):
+                    ring[i] = [
+                        round(float(pt[0]), COORD_DECIMALS),
+                        round(float(pt[1]), COORD_DECIMALS),
+                    ]
+    else:
+        for ring in coords:
+            for i, pt in enumerate(ring):
+                ring[i] = [
+                    round(float(pt[0]), COORD_DECIMALS),
+                    round(float(pt[1]), COORD_DECIMALS),
+                ]
 
-    for geojson in sorted(SPASIAL_DIR.glob("*.geojson")):
-        layer_name = geojson.stem.replace("_", " ")
-        # Try matching with original name
-        keep = None
-        for key in KEEP_PROPS:
-            if key.replace(" ", "_") == geojson.stem or key == layer_name:
-                keep = KEEP_PROPS[key]
-                break
-            if key.replace(" ", "_").lower() == geojson.stem.lower():
-                keep = KEEP_PROPS[key]
-                break
 
-        if keep is None:
-            layers_skip += 1
+def process_all() -> None:
+    os.makedirs(OUT_DIR, exist_ok=True)
+    if not os.path.isdir(RAW_DIR):
+        print(f"ERROR: {RAW_DIR} tidak ditemukan")
+        sys.exit(1)
+
+    files = sorted(f for f in os.listdir(RAW_DIR) if f.endswith(".geojson"))
+    ok, skip = 0, 0
+    for fname in files:
+        src = os.path.join(RAW_DIR, fname)
+        size_mb = os.path.getsize(src) >> 20
+        if size_mb > MAX_SIZE_MB:
+            print(f"[SKIP] {fname} — {size_mb}MB > {MAX_SIZE_MB}MB")
+            skip += 1
             continue
 
-        tolerance = SIMPLIFY_TOLERANCE.get(geojson.stem, 0)
+        layer_name = fname.replace(".geojson", "")
+        out = os.path.join(OUT_DIR, fname)
+        print(f"[PROCESS] {fname} ({size_mb}MB)...", end=" ", flush=True)
 
-        in_size = geojson.stat().st_size
-        out_path = OUTPUT_DIR / geojson.name
+        with open(src) as f:
+            data = json.load(f)
+        simplified = simplify_geojson(data, layer_name)
+        with open(out, "w") as f:
+            json.dump(simplified, f)
+        out_mb = os.path.getsize(out) >> 20
+        print(f"→ {out_mb}MB")
+        ok += 1
 
-        ok = simplify_geojson(geojson, out_path, keep, tolerance)
-        if ok:
-            out_size = out_path.stat().st_size
-            ratio = out_size / in_size * 100 if in_size > 0 else 0
-            print(f"  ✓ {geojson.stem}: {in_size//1024}KB → {out_size//1024}KB ({ratio:.0f}%)")
-            layers_ok += 1
-            total_in += in_size
-            total_out += out_size
-        else:
-            print(f"  ✗ {geojson.stem}: GAGAL")
-            layers_skip += 1
-
-    print(f"\n=== Selesai: {layers_ok} OK, {layers_skip} skip ===")
-    print(f"Total: {total_in//1024//1024}MB → {total_out//1024//1024}MB")
-    return layers_ok
+    print(f"\nSelesai: {ok} file disederhanakan, {skip} dilewati (>50MB)")
 
 
 if __name__ == "__main__":
-    main()
+    process_all()

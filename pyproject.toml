@@ -1,0 +1,45 @@
+[project]
+name = "spasi"
+version = "0.1.0"
+description = "Sistem Pemetaan Analisis Spasial Interaktif — Kab. Serang"
+requires-python = ">=3.14"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "ARG", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+strict = true
+python_version = "3.14"
+warn_unused_ignores = true
+warn_return_any = true
+no_implicit_optional = true
+check_untyped_defs = true
+disallow_any_unimported = false
+
+[[tool.mypy.overrides]]
+module = [
+    "pandas",
+    "folium",
+    "branca.*",
+    "streamlit_folium",
+    "qgis.*",
+    "dotenv",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "shared.etl_utils",
+    "shared.scripts.*",
+    "potensi_pajak_restoran.etl.*",
+    "potensi_pajak_hotel.etl.*",
+    "potensi_pajak_restoran.web.*",
+]
+disallow_untyped_defs = true

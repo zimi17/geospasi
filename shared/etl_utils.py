@@ -11,33 +11,57 @@ Fungsi:
   - generate_hotel_sql(): Generate SQL untuk tabel hotel
 """
 
+from __future__ import annotations
+
+import json
 import os
 import re
 import sys
-import json
 from difflib import SequenceMatcher
-from urllib.request import Request, urlopen
+from typing import Any
 from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 import pandas as pd
-import numpy as np
-
 
 # ---------------------------------------------------------------------------
 # Kolom wajib per sumber data
 # ---------------------------------------------------------------------------
 
 KOLOM_RESTORAN = {
-    "nama_usaha", "pemilik", "alamat", "desa", "kecamatan",
-    "npwp", "omzet_bulanan", "kategori", "status",
-    "lat", "lon", "geocode_confidence", "omzet_confidence", "npwp_valid",
+    "nama_usaha",
+    "pemilik",
+    "alamat",
+    "desa",
+    "kecamatan",
+    "npwp",
+    "omzet_bulanan",
+    "kategori",
+    "status",
+    "lat",
+    "lon",
+    "geocode_confidence",
+    "omzet_confidence",
+    "npwp_valid",
 }
 
 KOLOM_HOTEL = {
-    "nama_usaha", "pemilik", "alamat", "desa", "kecamatan",
-    "npwp", "jumlah_kamar", "tarif_rata", "okupansi_persen",
-    "omzet_bulanan", "omzet_confidence", "status", "npwp_valid",
-    "lat", "lon", "geocode_confidence",
+    "nama_usaha",
+    "pemilik",
+    "alamat",
+    "desa",
+    "kecamatan",
+    "npwp",
+    "jumlah_kamar",
+    "tarif_rata",
+    "okupansi_persen",
+    "omzet_bulanan",
+    "omzet_confidence",
+    "status",
+    "npwp_valid",
+    "lat",
+    "lon",
+    "geocode_confidence",
 }
 
 
@@ -45,7 +69,8 @@ KOLOM_HOTEL = {
 # Parse omzet
 # ---------------------------------------------------------------------------
 
-def parse_revenue(value):
+
+def parse_revenue(value: Any) -> tuple[float | None, str]:
     if pd.isna(value) or str(value).strip() == "":
         return None, "unparseable"
     if isinstance(value, (int, float)):
@@ -70,7 +95,8 @@ def parse_revenue(value):
 # Validasi NPWP
 # ---------------------------------------------------------------------------
 
-def validate_npwp(value):
+
+def validate_npwp(value: Any) -> bool:
     if pd.isna(value) or str(value).strip() in ("", "-", "0"):
         return False
     digits = re.sub(r"\D", "", str(value))
@@ -81,14 +107,15 @@ def validate_npwp(value):
 # Fuzzy duplicate detection
 # ---------------------------------------------------------------------------
 
-def fuzzy_duplicates(names, threshold=0.85):
-    names = names.fillna("").tolist()
-    dup_map = {}
-    for i in range(len(names)):
-        for j in range(i + 1, len(names)):
-            ratio = SequenceMatcher(None, names[i], names[j]).ratio()
+
+def fuzzy_duplicates(names: pd.Series, threshold: float = 0.85) -> dict[str, str]:
+    name_list: list[str] = names.fillna("").tolist()
+    dup_map: dict[str, str] = {}
+    for i in range(len(name_list)):
+        for j in range(i + 1, len(name_list)):
+            ratio = SequenceMatcher(None, name_list[i], name_list[j]).ratio()
             if ratio >= threshold:
-                dup_map[names[j]] = names[i]
+                dup_map[name_list[j]] = name_list[i]
     return dup_map
 
 
@@ -96,7 +123,8 @@ def fuzzy_duplicates(names, threshold=0.85):
 # Baca CSV
 # ---------------------------------------------------------------------------
 
-def read_csv(path):
+
+def read_csv(path: str) -> pd.DataFrame:
     if not os.path.exists(path):
         print(f"ERROR: File tidak ditemukan: {path}")
         sys.exit(1)
@@ -109,7 +137,8 @@ def read_csv(path):
 # Simpan laporan masalah
 # ---------------------------------------------------------------------------
 
-def simpan_laporan(issues_df, path):
+
+def simpan_laporan(issues_df: pd.DataFrame, path: str) -> None:
     if issues_df.empty:
         print("OK: Tidak ada masalah validasi")
         return
@@ -125,7 +154,12 @@ def simpan_laporan(issues_df, path):
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://vhthvtampaedrxiadmlc.supabase.co")
 SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 
-def load_to_supabase(df, table_name, allowed_columns):
+
+def load_to_supabase(
+    df: pd.DataFrame,
+    table_name: str,
+    allowed_columns: set[str],
+) -> None:
     if not SERVICE_KEY:
         print("ERROR: SUPABASE_SERVICE_KEY tidak ditemukan di .env")
         sys.exit(1)
@@ -135,11 +169,11 @@ def load_to_supabase(df, table_name, allowed_columns):
     rows = rows.where(pd.notna(rows), None)
 
     if "npwp_valid" in rows.columns:
-        rows["npwp_valid"] = rows["npwp_valid"].astype(object).where(
-            rows["npwp_valid"].notna(), None
+        rows["npwp_valid"] = (
+            rows["npwp_valid"].astype(object).where(rows["npwp_valid"].notna(), None)
         )
 
-    records = json.loads(rows.to_json(orient="records", default_handler=str))
+    records: list[dict[str, Any]] = json.loads(rows.to_json(orient="records", default_handler=str))
     headers = {
         "apikey": SERVICE_KEY,
         "Authorization": f"Bearer {SERVICE_KEY}",
