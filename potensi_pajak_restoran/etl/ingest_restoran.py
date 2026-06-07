@@ -22,7 +22,10 @@ import os
 import csv
 import re
 import sys
+import json
 from difflib import SequenceMatcher
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 
 import pandas as pd
 import numpy as np
@@ -110,7 +113,7 @@ def validate(df):
     issues = []
 
     omzet_parsed = df["omzet_bulanan"].apply(parse_revenue)
-    df["omzet_bersih"] = omzet_parsed.apply(lambda x: x[0])
+    df["omzet_bulanan"] = omzet_parsed.apply(lambda x: x[0])
     df["omzet_confidence"] = omzet_parsed.apply(lambda x: x[1])
 
     low_conf = df[df["omzet_confidence"] == "low"]
@@ -177,18 +180,62 @@ def transform(df):
 
 
 # ---------------------------------------------------------------------------
-# 5. Load ke PostGIS
+# 5. Load ke PostGIS via Supabase REST API
 # ---------------------------------------------------------------------------
 
-def load_to_postgis(df, engine):
-    df.to_sql(
-        "restoran_lapangan",
-        engine,
-        if_exists="append",
-        index=False,
-        method="multi",
-    )
-    print(f"OK: {len(df)} baris dimuat ke tabel restoran_lapangan")
+DB_COLUMNS = {
+    "nama_usaha", "pemilik", "alamat", "desa", "kecamatan",
+    "npwp", "omzet_bulanan", "kategori", "status",
+    "lat", "lon", "geocode_confidence", "omzet_confidence", "npwp_valid",
+}
+
+def load_to_supabase(df):
+    supabase_url = os.getenv("SUPABASE_URL", "https://vhthvtampaedrxiadmlc.supabase.co")
+    service_key = os.getenv("SUPABASE_SERVICE_KEY")
+
+    if not service_key:
+        print("ERROR: SUPABASE_SERVICE_KEY tidak ditemukan di .env")
+        sys.exit(1)
+
+    cols = list(DB_COLUMNS & set(df.columns))
+    rows = df[cols].copy()
+
+    # Ganti NaN dengan None (agar dikirim sebagai null)
+    rows = rows.where(pd.notna(rows), None)
+
+    # Convert bool ke Python bool
+    if "npwp_valid" in rows.columns:
+        rows["npwp_valid"] = rows["npwp_valid"].astype(object).where(
+            rows["npwp_valid"].notna(), None
+        )
+
+    records = json.loads(rows.to_json(orient="records", default_handler=str))
+
+    # Ganti None dengan None agar key tetap ada
+    # (PostgREST butuh semua object punya key yg sama)
+
+    headers = {
+        "apikey": service_key,
+        "Authorization": f"Bearer {service_key}",
+        "Content-Type": "application/json",
+    }
+
+    url = f"{supabase_url}/rest/v1/restoran_lapangan"
+    body = json.dumps(records).encode()
+
+    req = Request(url, data=body, headers=headers, method="POST")
+    try:
+        with urlopen(req) as resp:
+            raw = resp.read().decode()
+            if raw:
+                inserted = len(json.loads(raw))
+                print(f"OK: {inserted} baris dimuat ke tabel restoran_lapangan via REST API")
+            else:
+                print(f"OK: {len(records)} baris dimuat ke tabel restoran_lapangan via REST API")
+    except HTTPError as e:
+        err = e.read().decode()
+        print(f"ERROR {e.code}: {err[:500]}")
+        sys.exit(1)
 
 
 # ---------------------------------------------------------------------------
@@ -228,12 +275,10 @@ def main():
 
     if config["dry_run"]:
         print("DRY-RUN: Data tidak dimuat ke database")
-        print(df[["nama_usaha", "omzet_bersih", "omzet_confidence", "npwp_valid"]].head())
+        print(df[["nama_usaha", "omzet_bulanan", "omzet_confidence", "npwp_valid"]].head())
         return
 
-    from sqlalchemy import create_engine
-    engine = create_engine(config["db_url"])
-    load_to_postgis(df, engine)
+    load_to_supabase(df)
     print("ETL selesai.")
 
 

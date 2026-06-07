@@ -13,14 +13,54 @@ Output:
 
 import os
 import json
+import sys
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 from dotenv import load_dotenv
 import pandas as pd
-from sqlalchemy import create_engine, text
 
 load_dotenv()
 
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+
+def query_supabase():
+    supabase_url = os.getenv("SUPABASE_URL", "https://vhthvtampaedrxiadmlc.supabase.co")
+    service_key = os.getenv("SUPABASE_SERVICE_KEY")
+    if not service_key:
+        print("WARN: SUPABASE_SERVICE_KEY tidak ditemukan, fallback ke CSV")
+        return None
+
+    headers = {
+        "apikey": service_key,
+        "Authorization": f"Bearer {service_key}",
+    }
+
+    # Ambil semua data lalu agregasi di pandas
+    url = f"{supabase_url}/rest/v1/restoran_lapangan?select=desa,status,omzet_bulanan"
+    req = Request(url, headers=headers)
+    try:
+        with urlopen(req) as resp:
+            rows = json.loads(resp.read().decode())
+            if not rows:
+                return None
+            df = pd.DataFrame(rows)
+            df["omzet_bulanan"] = pd.to_numeric(df["omzet_bulanan"], errors="coerce")
+            agg = df.groupby("desa", as_index=False).agg(
+                jumlah_restoran=("status", "count"),
+                terdaftar=("status", lambda x: (x == "terdaftar").sum()),
+                tidak_terdaftar=("status", lambda x: (x == "tidak_terdaftar").sum()),
+                total_omzet=("omzet_bulanan", "sum"),
+                rata_omzet=("omzet_bulanan", "mean"),
+            )
+            agg["total_omzet"] = agg["total_omzet"].fillna(0)
+            agg["rata_omzet"] = agg["rata_omzet"].fillna(0)
+            print("INFO: Data dari Supabase (REST API)")
+            return agg
+    except Exception as e:
+        print(f"WARN: Gagal query Supabase ({e}), fallback ke CSV")
+        return None
 
 
 def csv_fallback():
@@ -42,29 +82,7 @@ def csv_fallback():
 
 
 def main():
-    db_url = os.getenv("SUPABASE_DB_URL")
-    df = None
-
-    if db_url:
-        try:
-            engine = create_engine(db_url)
-            query = text("""
-                SELECT
-                    desa,
-                    COUNT(*) AS jumlah_restoran,
-                    COUNT(*) FILTER (WHERE status = 'terdaftar') AS terdaftar,
-                    COUNT(*) FILTER (WHERE status = 'tidak_terdaftar') AS tidak_terdaftar,
-                    COALESCE(SUM(omzet_bulanan), 0) AS total_omzet,
-                    COALESCE(AVG(omzet_bulanan), 0) AS rata_omzet
-                FROM restoran_lapangan
-                GROUP BY desa
-            """)
-            df = pd.read_sql(query, engine)
-            if df.empty:
-                df = None
-        except Exception as e:
-            print(f"WARN: Gagal konek Supabase ({e}), fallback ke CSV")
-            df = None
+    df = query_supabase()
 
     if df is None:
         df = csv_fallback()
