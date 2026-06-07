@@ -1,18 +1,51 @@
 <!DOCTYPE qgisProcessingModel >
-<QgsProcessingModel version="3.28">
-  <id>deteksi_kesenjangan</id>
-  <name>Deteksi Kesenjangan Pajak Restoran</name>
-  <description>
-    Model QGIS untuk menghitung kesenjangan (gap) antara potensi pajak
-    dan realisasi penerimaan pajak restoran per desa di Kec. Anyar.
-
-    Alur:
-    1. Spatial Join: titik restoran → poligon desa
-    2. Agregasi omzet per desa
-    3. Join dengan data target PAD per desa
-    4. Kalkulasi gap: (target - estimasi) / target * 100
-  </description>
-  <inputs/>
-  <outputs/>
-  <algorithms/>
-</QgsProcessingModel>
+<qgisProcessingModel version="3.28" labelsPrefix="" name="Deteksi Kesenjangan Pajak Restoran">
+  <inputs>
+    <input id="Restoran_Lapangan" name="Restoran Lapangan (Point)" type="vector">
+      <geometryType>point</geometryType>
+    </input>
+    <input id="Batas_Desa" name="Batas Desa (Polygon)" type="vector">
+      <geometryType>polygon</geometryType>
+    </input>
+    <input id="Target_PAD" name="Target PAD Per Desa" type="vector">
+      <geometryType>none</geometryType>
+    </input>
+  </inputs>
+  <outputs>
+    <output id="Desa_dengan_Gap" name="Desa dengan Gap Pajak" type="vector">
+      <geometryType>polygon</geometryType>
+    </output>
+    <output id="Tabel_Summary" name="Summary Statistik" type="table">
+      <geometryType>none</geometryType>
+    </output>
+  </outputs>
+  <algorithms>
+    <algorithm id="Spatial_Join" type="native:countpointsinpolygon">
+      <parameters>
+        <input id="POLYGONS" inputId="Batas_Desa"/>
+        <input id="POINTS" inputId="Restoran_Lapangan"/>
+        <parameter id="FIELD" value="jumlah_restoran"/>
+      </parameters>
+    </algorithm>
+    <algorithm id="Join_Atribut" type="native:joinattributestable">
+      <parameters>
+        <input id="INPUT" algorithmId="Spatial_Join"/>
+        <input id="FIELD" inputId="Target_PAD"/>
+        <parameter id="PREFIX" value="target_"/>
+      </parameters>
+    </algorithm>
+    <algorithm id="Hitung_Gap" type="native:fieldcalculator">
+      <parameters>
+        <input id="INPUT" algorithmId="Join_Atribut"/>
+        <parameter id="FIELD_NAME" value="gap_persen"/>
+        <parameter id="FORMULA" value="100 - (\"NUMPOINTS\" / \"target_omzet\") * 100"/>
+      </parameters>
+    </algorithm>
+    <algorithm id="Summary_Stats" type="native:basicstatisticsforfields">
+      <parameters>
+        <input id="INPUT" algorithmId="Hitung_Gap"/>
+        <parameter id="FIELDS" value="gap_persen,NUMPOINTS"/>
+      </parameters>
+    </algorithm>
+  </algorithms>
+</qgisProcessingModel>

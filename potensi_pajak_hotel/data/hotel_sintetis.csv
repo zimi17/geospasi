@@ -1,0 +1,9 @@
+nama_usaha,pemilik,alamat,desa,kecamatan,npwp,jumlah_kamar,tarif_rata,okupansi_persen,omzet_bulanan,status
+Hotel Anyar Indah,Slamet Riyadi,Jl Raya Anyar Km 1,Anyar,Anyar,123456789012345,40,350000,75,31500000,terdaftar
+Penginapan Bahari,Dewi Lestari,Jl Pantai Anyar No 10,Anyar,Anyar,234567890123456,15,200000,60,5400000,tidak_terdaftar
+Losmen Karya Jaya,Ahmad Fauzi,Jl Pasar Anyar No 5,Anyar,Anyar,345678901234567,10,150000,50,2250000,tidak_terdaftar
+Villa Cimanuk Asri,Siti Nurhaliza,Jl Raya Cimanuk Km 2,Cimanuk,Anyar,456789012345678,8,500000,40,4800000,tidak_terdaftar
+Hotel Karyawan Permai,Budi Santoso,Jl Desa Karyawan No 3,Karyawan,Anyar,567890123456789,25,280000,65,13650000,terdaftar
+Wisma Tambang Ayam,Supriyadi,Jl Raya Tambang Ayam No 7,Tambang Ayam,Anyar,678901234567890,12,180000,55,2970000,tidak_terdaftar
+Hotel Pantai Anyar,Diana Putri,Jl Pantai Anyar No 20,Anyar,Anyar,789012345678901,30,450000,80,32400000,terdaftar
+Pondok Indah Anyar,Hendra Gunawan,Jl Anyar Indah No 2,Anyar,Anyar,890123456789012,20,220000,70,9240000,terdaftar
