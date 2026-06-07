@@ -1,0 +1,21 @@
+id,nama_usaha,pemilik,alamat,desa,kecamatan,npwp,omzet_bulanan,kategori,status
+1,RM Sinar Anyar,Slamet Riyadi,Jl Raya Anyar Km 3 No 12,Anyar,Anyar,123456789012345,45000000,restoran,terdaftar
+2,Kafe Pantai Indah,Dewi Sartika,Jl Pantai Anyar No 7,Anyar,Anyar,234567890123456,28000000,kafe,terdaftar
+3,Warteg Bahari 1,Agus Supriyadi,Gg Melati No 2 RT 01/03,Anyar,Anyar,,15000000,warteg,tidak_terdaftar
+4,RM Padang Jaya,Zulkarnaen,Jl Raya Anyar Km 5,Anyar,Anyar,345678901234567,65000000,restoran,terdaftar
+5,Cafe D'Beach,Sari Dewi,Jl Pantai Anyar Km 2,Karyawan,Anyar,456789012345678,35000000,kafe,terdaftar
+6,RM Ayam Goreng Sr,Hendra Gunawan,Kp Sindang RT 02/01,Karyawan,Anyar,,12000000,restoran,tidak_terdaftar
+7,RM Laut Biru,Bambang Susilo,Jl Raya Anyar Km 4,Tambang Ayam,Anyar,567890123456789,55000000,restoran,terdaftar
+8,Warteg Bahari 2,Maryati,Kp Pasar Anyar RT 03/02,Anyar,Anyar,,8000000,warteg,tidak_terdaftar
+9,RM Seafood Segar,Siti Nurhaliza,Jl Pantai Anyar Km 1,Tambang Ayam,Anyar,678901234567890,72000000,restoran,terdaftar
+10,Es Teh Manja,Ahmad Fauzi,Kp Cimanuk RT 01/01,Cimanuk,Anyar,,5000000,kafe,tidak_terdaftar
+11,RM Sunda Rindu,Rina Marlina,Jl Raya Anyar Km 6,Anyar,Anyar,789012345678901,38000000,restoran,terdaftar
+12,Kafe Kita,Hasan Basri,Jl Desa Karyawan No 3,Karyawan,Anyar,890123456789012,22000000,kafe,terdaftar
+13,Soto Seger Makmur,Joko Widodo,Gg Kenanga No 5,Anyar,Anyar,,10000000,restoran,tidak_terdaftar
+14,RM Pesisir Indah,Ratna Dewi,Jl Pantai Anyar Km 4,Tambang Ayam,Anyar,901234567890123,48000000,restoran,terdaftar
+15,Warteg Mbah Joyo,Slamet Haryono,Kp Cimanuk RT 04/02,Cimanuk,Anyar,,7000000,warteg,tidak_terdaftar
+16,Depot Bu Rini,Rini Sulastri,Jl Raya Anyar Km 2,Karyawan,Anyar,,9000000,restoran,tidak_terdaftar
+17,RM Bakmi Jawa,Eko Prasetyo,Kp Pasar Anyar RT 02/01,Anyar,Anyar,123456789012346,25000000,restoran,terdaftar
+18,Cafe Our Place,Dian Permata,Jl Pantai Anyar Km 5,Tambang Ayam,Anyar,,18000000,kafe,tidak_terdaftar
+19,RM Teluk Indah,Fajar Nugroho,Jl Raya Anyar Km 1,Anyar,Anyar,234567890123457,63000000,restoran,terdaftar
+20,Warteg Dewi,Fitri Handayani,Kp Cimanuk RT 03/01,Cimanuk,Anyar,,6500000,warteg,tidak_terdaftar

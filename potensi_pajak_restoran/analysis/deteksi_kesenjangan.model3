@@ -1,0 +1,18 @@
+<!DOCTYPE qgisProcessingModel >
+<QgsProcessingModel version="3.28">
+  <id>deteksi_kesenjangan</id>
+  <name>Deteksi Kesenjangan Pajak Restoran</name>
+  <description>
+    Model QGIS untuk menghitung kesenjangan (gap) antara potensi pajak
+    dan realisasi penerimaan pajak restoran per desa di Kec. Anyar.
+
+    Alur:
+    1. Spatial Join: titik restoran → poligon desa
+    2. Agregasi omzet per desa
+    3. Join dengan data target PAD per desa
+    4. Kalkulasi gap: (target - estimasi) / target * 100
+  </description>
+  <inputs/>
+  <outputs/>
+  <algorithms/>
+</QgsProcessingModel>
