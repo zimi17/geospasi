@@ -1,35 +1,63 @@
-name: Laporan Bug
-description: Laporkan bug atau error di SPASI
-labels: [bug]
+name: Laporkan Bug
+description: Laporkan masalah teknis pada aplikasi Geospasi
+labels: ["bug"]
 body:
-  - type: textarea
-    id: deskripsi
+  - type: markdown
     attributes:
-      label: Deskripsi Bug
+      value: |
+        Terima kasih sudah melaporkan bug. Mohon isi sedetail mungkin.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Deskripsi
       description: Apa yang terjadi? Apa yang seharusnya terjadi?
     validations:
       required: true
+
   - type: textarea
-    id: langkah
+    id: steps
     attributes:
-      label: Langkah Reproduksi
+      label: Langkah reproduksi
       description: Langkah-langkah untuk memunculkan bug
       placeholder: |
-        1. Buka file ...
-        2. Jalankan perintah ...
-        3. Lihat error ...
+        1. Buka app
+        2. Klik lensa ...
+        3. Muncul error ...
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: URL / Environment
+      description: URL aplikasi atau environment lokal
+      placeholder: https://zimi17.github.io/geospasi/
+
   - type: dropdown
-    id: komponen
+    id: browser
     attributes:
-      label: Komponen
+      label: Browser
       options:
-        - ETL / Script Python
-        - QGIS Model
-        - Frontend Web
-        - Database / SQL
-        - Dokumentasi
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Lainnya
+
   - type: textarea
-    id: lingkungan
+    id: logs
     attributes:
-      label: Lingkungan
-      description: OS, Python version, QGIS version
+      label: Console / Network Logs
+      description: Screenshot atau salin error dari DevTools (F12)
+      render: shell
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Konfirmasi
+      options:
+        - label: Sudah mencari issue serupa yang sudah ada
+          required: true
+        - label: Data yang dilaporkan adalah data publik/sintetik
+          required: true

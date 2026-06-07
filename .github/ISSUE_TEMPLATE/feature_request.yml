@@ -1,23 +1,51 @@
-name: Ide / Fitur Baru
-description: Usulkan ide untuk SPASI
-labels: [enhancement]
+name: Permintaan Fitur
+description: Usulkan ide atau peningkatan untuk Geospasi
+labels: ["enhancement"]
 body:
-  - type: textarea
-    id: masalah
+  - type: markdown
     attributes:
-      label: Masalah yang Ingin Diselesaikan
-      description: Apa yang kurang atau sulit dilakukan saat ini?
+      value: |
+        Ceritakan ide Anda untuk Geospasi.
+
   - type: textarea
-    id: solusi
+    id: problem
     attributes:
-      label: Solusi yang Diusulkan
-      description: Bagaimana SPASI bisa menyelesaikan masalah ini?
+      label: Apa masalah yang ingin dipecahkan?
+      description: Ceritakan konteks atau masalah yang Anda hadapi.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solusi yang diusulkan
+      description: Bagaimana seharusnya fitur ini bekerja?
+      placeholder: Tambahkan tombol X di sidebar yang melakukan Y...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatif
+      description: Solusi lain yang sudah dipertimbangkan
+
   - type: dropdown
-    id: dampak
+    id: scope
     attributes:
-      label: Dampak
+      label: Lingkup
       options:
-        - Mahasiswa (skripsi)
-        - Dosen/Peneliti
-        - Pemerintah Daerah
-        - Kontributor teknis
+        - Geospasi Core (app/)
+        - GeoSERANG (contoh implementasi)
+        - Dokumentasi
+        - Skrip / Tooling
+        - Lainnya
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Konfirmasi
+      options:
+        - label: Sudah mencari usulan serupa yang sudah ada
+          required: true
+        - label: Bersedia membantu implementasi jika memungkinkan

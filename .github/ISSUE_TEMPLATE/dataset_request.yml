@@ -1,0 +1,64 @@
+name: Permintaan Dataset
+description: Usulkan dataset geospasial untuk ditambahkan ke aplikasi
+labels: ["dataset"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Dataset geospasial apa yang perlu ditambahkan? Mohon sertakan sumber.
+
+  - type: input
+    id: dataset-name
+    attributes:
+      label: Nama Dataset
+      placeholder: misal: Sebaran SMA/SMK Kabupaten Serang
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Lingkup
+      options:
+        - GeoSERANG (Kab. Serang)
+        - Daerah baru
+        - Nasional
+      validations:
+        required: true
+
+  - type: input
+    id: source-url
+    attributes:
+      label: URL Sumber Data
+      placeholder: https://data.serangkab.go.id/...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: source-type
+    attributes:
+      label: Tipe Sumber
+      options:
+        - CKAN / API
+        - GeoServer / WFS
+        - File (SHP/GeoJSON/KML)
+        - Website (perlu scraping)
+        - Lainnya
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Deskripsi
+      description: Kenapa dataset ini berguna? Kolom apa saja yang penting?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Konfirmasi
+      options:
+        - label: Dataset ini bersifat publik / open data
+          required: true
+        - label: Data tidak berisi informasi pribadi (sesuai UU PDP)
+          required: true

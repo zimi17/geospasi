@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Diskusi Geospasi
+    url: https://github.com/zimi17/geospasi/discussions
+    about: Tanya jawab, ide, dan diskusi umum
+  - name: Dokumentasi
+    url: https://github.com/zimi17/geospasi/blob/main/README.md
+    about: Baca dokumentasi sebelum membuat issue

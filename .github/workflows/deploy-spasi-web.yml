@@ -26,6 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup GeoSERANG deployment
         run: |
+          mkdir -p app/data
           cp examples/geoserang/config.js app/js/config.js
           cp -r examples/geoserang/data/* app/data/
       - name: Setup Pages
