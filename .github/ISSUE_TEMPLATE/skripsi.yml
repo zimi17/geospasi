@@ -1,0 +1,22 @@
+name: Template Skripsi
+description: Ajukan topik skripsi berbasis SPASI
+labels: [skripsi]
+body:
+  - type: input
+    id: nama
+    attributes:
+      label: Nama Mahasiswa
+  - type: input
+    id: nim
+    attributes:
+      label: NIM
+  - type: textarea
+    id: topik
+    attributes:
+      label: Topik Skripsi
+      description: Judul sementara atau area riset yang diminati
+  - type: textarea
+    id: data
+    attributes:
+      label: Data yang Dibutuhkan
+      description: Data apa yang perlu disiapkan? (contoh: data restoran, hotel, PBB)

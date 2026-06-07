@@ -1,0 +1,23 @@
+name: Ide / Fitur Baru
+description: Usulkan ide untuk SPASI
+labels: [enhancement]
+body:
+  - type: textarea
+    id: masalah
+    attributes:
+      label: Masalah yang Ingin Diselesaikan
+      description: Apa yang kurang atau sulit dilakukan saat ini?
+  - type: textarea
+    id: solusi
+    attributes:
+      label: Solusi yang Diusulkan
+      description: Bagaimana SPASI bisa menyelesaikan masalah ini?
+  - type: dropdown
+    id: dampak
+    attributes:
+      label: Dampak
+      options:
+        - Mahasiswa (skripsi)
+        - Dosen/Peneliti
+        - Pemerintah Daerah
+        - Kontributor teknis

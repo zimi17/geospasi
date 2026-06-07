@@ -1,0 +1,35 @@
+name: Laporan Bug
+description: Laporkan bug atau error di SPASI
+labels: [bug]
+body:
+  - type: textarea
+    id: deskripsi
+    attributes:
+      label: Deskripsi Bug
+      description: Apa yang terjadi? Apa yang seharusnya terjadi?
+    validations:
+      required: true
+  - type: textarea
+    id: langkah
+    attributes:
+      label: Langkah Reproduksi
+      description: Langkah-langkah untuk memunculkan bug
+      placeholder: |
+        1. Buka file ...
+        2. Jalankan perintah ...
+        3. Lihat error ...
+  - type: dropdown
+    id: komponen
+    attributes:
+      label: Komponen
+      options:
+        - ETL / Script Python
+        - QGIS Model
+        - Frontend Web
+        - Database / SQL
+        - Dokumentasi
+  - type: textarea
+    id: lingkungan
+    attributes:
+      label: Lingkungan
+      description: OS, Python version, QGIS version
