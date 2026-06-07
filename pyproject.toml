@@ -1,7 +1,7 @@
 [project]
-name = "spasi"
+name = "geospasi"
 version = "0.1.0"
-description = "Sistem Pemetaan Analisis Spasial Interaktif — Kab. Serang"
+description = "Open-source geospatial research viewer — static-first, GeoJSON-first"
 requires-python = ">=3.14"
 
 [tool.ruff]
@@ -36,10 +36,9 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = [
-    "shared.etl_utils",
-    "shared.scripts.*",
-    "potensi_pajak_restoran.etl.*",
-    "potensi_pajak_hotel.etl.*",
-    "potensi_pajak_restoran.web.*",
+    "scripts.etl_utils",
+    "scripts.*",
+    "examples.geoserang.scripts.*",
+    "examples.geoserang.studi.*",
 ]
 disallow_untyped_defs = true

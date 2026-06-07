@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id" style="touch-action:manipulation">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<title>Geospasi — Open Source Geospatial Viewer</title>
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
+</head>
+<body>
+<a href="#peta-container" class="skip-link">Langsung ke peta</a>
+<div id="app">
+  <aside id="panel-kiri" role="complementary" aria-label="Panel peta">
+    <div class="logo">
+      <h1>Geospasi</h1>
+      <span class="subtitle" id="subtitle">Peta Interaktif</span>
+    </div>
+    <div id="search-box">
+      <input id="search-input" type="search" placeholder="Cari lokasi…" autocomplete="off" spellcheck="false" aria-label="Cari lokasi">
+      <div id="search-results" class="hidden"></div>
+    </div>
+    <button id="btn-share" aria-label="Salin tautan peta" title="Salin tautan">🔗</button>
+    <nav id="lensa-nav" aria-label="Layer peta"></nav>
+    <div id="custom-panel">
+      <h3>Layer Kustom</h3>
+      <div id="custom-form">
+        <input id="custom-url" type="url" placeholder="https://example.com/data.geojson" aria-label="URL GeoJSON publik">
+        <button id="custom-add" aria-label="Tambah layer" title="Tambah">+</button>
+      </div>
+      <div id="custom-list"></div>
+    </div>
+    <div id="legenda" role="region" aria-label="Legenda peta"></div>
+  </aside>
+
+  <main id="peta-container">
+    <div id="peta" role="application" aria-label="Peta interaktif"></div>
+    <div id="info-panel" class="hidden" role="region" aria-label="Info fitur">
+      <button id="info-tutup" aria-label="Tutup panel info">&times;</button>
+      <div id="info-content"></div>
+    </div>
+  </main>
+
+  <div id="loading" class="hidden" role="alert" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <span>Memuat data…</span>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

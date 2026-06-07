@@ -1,30 +1,46 @@
-# Kontribusi ke SPASI
+# Contributing
 
-Terima kasih tertarik berkontribusi! Berikut panduan singkat untuk memulai.
+## Development Setup
 
-## Cara Berkontribusi
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-1. **Fork** repo ini
-2. Buat branch fitur: `git checkout -b fitur-anda`
-3. Commit perubahan: `git commit -m "Tambah fitur X"`
-4. Push: `git push origin fitur-anda`
-5. Buat **Pull Request**
+## Code Quality
 
-## Panduan
+All Python code must pass:
 
-- Gunakan Bahasa Indonesia untuk komentar kode dan dokumentasi
-- Jangan commit file `.env` atau data mentah (sudah di `.gitignore`)
-- File CSV >1MB simpan di Google Drive, tautan di README
-- Uji script ETL dengan `--dry-run` sebelum pull request
-- Untuk perubahan QGIS model, sertakan screenshot hasil
+```bash
+ruff check .
+ruff format --check .
+mypy .
+```
 
-## Area yang Butuh Bantuan
+## Project Structure
 
-- Geocoding dan validasi data lapangan
-- Pembuatan peta cerita (storymap) Leaflet
-- Dokumentasi tutorial untuk mahasiswa
-- Uji coba model QGIS dengan data nyata
+- `app/` — core viewer (vanilla JS, no framework). Keep generic.
+- `examples/` — region-specific implementations. Keep data separate from code.
+- `scripts/` — generic Python utilities. No hardcoded region paths.
+- `docs/` — general documentation.
 
-## Kode Etik
+## Pull Request Guidelines
 
-Harap bersikap hormat dan inklusif. Kontribusi bersifat sukarela untuk riset terbuka.
+1. One feature per PR.
+2. If modifying `app/`, verify with both `config.sample.js` and a region config.
+3. If adding region-specific data, put it in `examples/<region>/`.
+4. No hardcoded API keys or secrets.
+
+## Acceptance Testing
+
+Before submitting:
+
+- [ ] `app/` opens with sample config (no JS errors)
+- [ ] At least 2 lensa can be active simultaneously
+- [ ] Custom GeoJSON URL loads successfully
+- [ ] Invalid GeoJSON URL shows user-friendly error
+- [ ] Share URL preserves map state + custom layers
+- [ ] Removing custom layer cleans up map + URL
+- [ ] `ruff check .` passes
+- [ ] `mypy .` passes

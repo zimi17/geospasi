@@ -1,34 +1,19 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-dist/
-build/
-.venv/
-venv/
-
 # Environment
 .env
+venv/
 
-# QGIS
-*.lock
+# Python cache
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+
+# Raw spatial data (not committed — 1.2GB)
+examples/geoserang/data/spasial/
+
+# GeoSERANG data (copied at deploy time, not in core repo root)
+app/data/
 
 # OS
 .DS_Store
 Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# Data besar (>1MB) tidak masuk repo
-*.gdb/
-*.gpkg
-*.sqlite
-*.mdb
-
-# Raw spasial GISTARU (1.2GB) — web/data/ sudah cukup
-shared/data/spasial/
-
-# Screenshot build
-docs/screenshot-*.png
