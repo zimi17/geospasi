@@ -1,0 +1,36 @@
+name: Export Data Agregat ke GeoJSON
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"  # Setiap Senin jam 06:00 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pandas sqlalchemy psycopg2-binary python-dotenv
+
+      - name: Export agregat
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: python shared/scripts/export_agregat.py
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "spasi-bot"
+          git config user.email "bot@spasi.id"
+          git add potensi_pajak_restoran/data/agregat_desa.geojson
+          git diff --staged --quiet || git commit -m "chore: update data agregat desa"
+          git push

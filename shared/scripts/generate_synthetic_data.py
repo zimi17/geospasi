@@ -21,7 +21,7 @@ import os
 random.seed(42)
 
 OUTPUT_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")),
     "potensi_pajak_restoran",
     "data"
 )
@@ -63,7 +63,7 @@ def generate_restoran_csv(n=30):
         })
 
     fieldnames = [
-        "id", "nama_uselah", "pemilik", "alamat", "desa",
+        "id", "nama_usaha", "pemilik", "alamat", "desa",
         "kecamatan", "npwp", "omzet_bulanan", "kategori", "status"
     ]
 

@@ -1,0 +1,31 @@
+id,nama_usaha,pemilik,alamat,desa,kecamatan,npwp,omzet_bulanan,kategori,status
+1,RM Sintetis 1,Pemilik 1,"Jl Sintetis No 1, Kp Anyar",Anyar,Anyar,,37868828,restoran,tidak_terdaftar
+2,RM Sintetis 2,Pemilik 2,"Jl Sintetis No 2, Kp Karyawan",Karyawan,Anyar,,16668732,restoran,tidak_terdaftar
+3,RM Sintetis 3,Pemilik 3,"Jl Sintetis No 3, Kp Cimanuk",Cimanuk,Anyar,668976791808536,34345092,restoran,terdaftar
+4,RM Sintetis 4,Pemilik 4,"Jl Sintetis No 4, Kp Anyar",Anyar,Anyar,605763410660320,61306997,warteg,terdaftar
+5,RM Sintetis 5,Pemilik 5,"Jl Sintetis No 5, Kp Tambang Ayam",Tambang Ayam,Anyar,,26429110,restoran,tidak_terdaftar
+6,RM Sintetis 6,Pemilik 6,"Jl Sintetis No 6, Kp Cimanuk",Cimanuk,Anyar,959620340656739,33898923,kafe,terdaftar
+7,RM Sintetis 7,Pemilik 7,"Jl Sintetis No 7, Kp Tambang Ayam",Tambang Ayam,Anyar,779735886445425,17981052,restoran,terdaftar
+8,RM Sintetis 8,Pemilik 8,"Jl Sintetis No 8, Kp Tambang Ayam",Tambang Ayam,Anyar,,21753883,restoran,tidak_terdaftar
+9,RM Sintetis 9,Pemilik 9,"Jl Sintetis No 9, Kp Cimanuk",Cimanuk,Anyar,316498896198079,53537831,restoran,terdaftar
+10,RM Sintetis 10,Pemilik 10,"Jl Sintetis No 10, Kp Anyar",Anyar,Anyar,,43840994,restoran,tidak_terdaftar
+11,RM Sintetis 11,Pemilik 11,"Jl Sintetis No 11, Kp Anyar",Anyar,Anyar,,56019678,restoran,tidak_terdaftar
+12,RM Sintetis 12,Pemilik 12,"Jl Sintetis No 12, Kp Tambang Ayam",Tambang Ayam,Anyar,,53966946,kafe,tidak_terdaftar
+13,RM Sintetis 13,Pemilik 13,"Jl Sintetis No 13, Kp Karyawan",Karyawan,Anyar,829623390124760,40833156,kafe,terdaftar
+14,RM Sintetis 14,Pemilik 14,"Jl Sintetis No 14, Kp Anyar",Anyar,Anyar,,37857966,warteg,tidak_terdaftar
+15,RM Sintetis 15,Pemilik 15,"Jl Sintetis No 15, Kp Karyawan",Karyawan,Anyar,465109520294191,34476249,kafe,terdaftar
+16,RM Sintetis 16,Pemilik 16,"Jl Sintetis No 16, Kp Anyar",Anyar,Anyar,,47339391,restoran,tidak_terdaftar
+17,RM Sintetis 17,Pemilik 17,"Jl Sintetis No 17, Kp Cimanuk",Cimanuk,Anyar,837957899055471,47235350,kafe,terdaftar
+18,RM Sintetis 18,Pemilik 18,"Jl Sintetis No 18, Kp Cimanuk",Cimanuk,Anyar,,66586053,kafe,tidak_terdaftar
+19,RM Sintetis 19,Pemilik 19,"Jl Sintetis No 19, Kp Karyawan",Karyawan,Anyar,758185471675398,40264581,kafe,terdaftar
+20,RM Sintetis 20,Pemilik 20,"Jl Sintetis No 20, Kp Cimanuk",Cimanuk,Anyar,673675080889732,34436733,warteg,terdaftar
+21,RM Sintetis 21,Pemilik 21,"Jl Sintetis No 21, Kp Cimanuk",Cimanuk,Anyar,,19716857,restoran,tidak_terdaftar
+22,RM Sintetis 22,Pemilik 22,"Jl Sintetis No 22, Kp Karyawan",Karyawan,Anyar,171526651937588,61661351,warteg,terdaftar
+23,RM Sintetis 23,Pemilik 23,"Jl Sintetis No 23, Kp Cimanuk",Cimanuk,Anyar,383066387138985,67820592,kafe,terdaftar
+24,RM Sintetis 24,Pemilik 24,"Jl Sintetis No 24, Kp Anyar",Anyar,Anyar,,40812670,warteg,tidak_terdaftar
+25,RM Sintetis 25,Pemilik 25,"Jl Sintetis No 25, Kp Tambang Ayam",Tambang Ayam,Anyar,103652670930083,26227574,restoran,terdaftar
+26,RM Sintetis 26,Pemilik 26,"Jl Sintetis No 26, Kp Tambang Ayam",Tambang Ayam,Anyar,,73139880,warteg,tidak_terdaftar
+27,RM Sintetis 27,Pemilik 27,"Jl Sintetis No 27, Kp Anyar",Anyar,Anyar,323955095222471,73137358,warteg,terdaftar
+28,RM Sintetis 28,Pemilik 28,"Jl Sintetis No 28, Kp Karyawan",Karyawan,Anyar,,5076758,kafe,tidak_terdaftar
+29,RM Sintetis 29,Pemilik 29,"Jl Sintetis No 29, Kp Tambang Ayam",Tambang Ayam,Anyar,369596417933055,53718453,kafe,terdaftar
+30,RM Sintetis 30,Pemilik 30,"Jl Sintetis No 30, Kp Anyar",Anyar,Anyar,,15570592,restoran,tidak_terdaftar
